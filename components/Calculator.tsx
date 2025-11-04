@@ -13,36 +13,38 @@ export default function Calculator() {
   const [resultado, setResultado] = useState<CalculationResult | null>(null);
 
   const calcular = useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    if (!tipo) return;
+  e.preventDefault();
+  if (!tipo) return;
 
-    const v = data.valores;
-    let min = 0, max = 0, medio = 0, detalhes = "";
+  let min = 0, max = 0, medio = 0, detalhes = "";
 
-    if (tipo === "consultoria" && nivel && horas) {
-      const t = v.consultoria[nivel];
-      const h = parseFloat(horas);
-      min = h * t.min;
-      max = h * t.max;
-      medio = (min + max) / 2;
-      detalhes = `Consultoria (${nivel}) • ${h}h • R$ ${t.min}-${t.max}/h`;
-    } else if (tipo === "acompanhamento" && custoObra) {
-      const custo = parseFloat(custoObra);
-      min = custo * (v.acompanhamento.min / 100);
-      max = custo * (v.acompanhamento.max / 100);
-      medio = (min + max) / 2;
-      detalhes = `${v.acompanhamento.min}%-${v.acompanhamento.max}% sobre R$ ${custo.toLocaleString("pt-BR")}`;
-    } else if (area && mult) {
-      const a = parseFloat(area);
-      const m = parseFloat(mult);
-      min = a * v[tipo].min * m;
-      max = a * v[tipo].max * m;
-      medio = (min + max) / 2;
-      detalhes = `${a}m² • R$ ${(v[tipo].min * m).toFixed(2)}-${(v[tipo].max * m).toFixed(2)}/m²`;
-    }
+  if (tipo === "consultoria" && nivel && horas) {
+    const t = data.valores.consultoria[nivel];
+    const h = parseFloat(horas);
+    min = h * t.min;
+    max = h * t.max;
+    medio = (min + max) / 2;
+    detalhes = `Consultoria (${nivel}) • ${h}h • R$ ${t.min}-${t.max}/h`;
+  } else if (tipo === "acompanhamento" && custoObra) {
+    const custo = parseFloat(custoObra);
+    const pmin = data.valores.acompanhamento.min;
+    const pmax = data.valores.acompanhamento.max;
+    min = custo * (pmin / 100);
+    max = custo * (pmax / 100);
+    medio = (min + max) / 2;
+    detalhes = `${pmin}%-${pmax}% sobre R$ ${custo.toLocaleString("pt-BR")}`;
+  } else if (area && mult) {
+    const a = parseFloat(area);
+    const m = parseFloat(mult);
+    const tipoValor = data.valores[tipo as "projeto-basico" | "projeto-completo"];
+    min = a * tipoValor.min * m;
+    max = a * tipoValor.max * m;
+    medio = (min + max) / 2;
+    detalhes = `${a}m² • R$ ${(tipoValor.min * m).toFixed(2)}-${(tipoValor.max * m).toFixed(2)}/m²`;
+  }
 
-    setResultado({ min, max, medio, detalhes });
-  }, [tipo, area, custoObra, horas, nivel, mult]);
+  setResultado({ min, max, medio, detalhes });
+}, [tipo, area, custoObra, horas, nivel, mult]);
 
   return (
     <div style={{ background: "white", borderRadius: 16, padding: 24, boxShadow: "0 10px 40px rgba(0,0,0,.1)" }}>
