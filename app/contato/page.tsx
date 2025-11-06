@@ -33,7 +33,7 @@ export default function Contato() {
               textDecoration: "none"
             }}
           >
-            alexandre.rosei@gmail.com
+            studiorossiarquitetura@gmail.com
           </a>
           <p style={{ color: "#6b7280", fontSize: 14, marginTop: 12 }}>
             Respondemos em até 48 horas úteis.
